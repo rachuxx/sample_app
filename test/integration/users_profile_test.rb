@@ -19,4 +19,15 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
       assert_match micropost.content, response.body
     end
   end
+
+  test "working following/followed partials" do
+    log_in_as(@user)
+    get root_path
+    assert_template 'static_pages/home'
+    assert_select 'div.stats', count: 1
+    assert_select 'strong.stat', text: @user.following.count.to_s
+    assert_select 'strong.stat', text: @user.followers.count.to_s
+    assert_select 'a[href=?]', following_user_path(@user), count: 1
+    assert_select 'a[href=?]', followers_user_path(@user), count: 1
+  end
 end
